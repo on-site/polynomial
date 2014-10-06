@@ -4,13 +4,12 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'Polynomial/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "Polynomial"
+  spec.name          = "polynomial"
   spec.version       = Polynomial::VERSION
-  spec.authors       = ["February Skai"]
+  spec.authors       = ["Adriano Mitre", "February Keeney", "Huilin Chen"]
   spec.email         = ["fskai@on-site.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
-  spec.homepage      = ""
+  spec.summary       = 'Rich-featured single and multiple variables polynomials classes for Ruby.'
+  spec.homepage      = "https://github.com/on-site/polynomial"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")

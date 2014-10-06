@@ -1,9 +1,3 @@
-class Polynomial #:nodoc:
-  module VERSION #:nodoc:
-    MAJOR = 0
-    MINOR = 7
-    TINY  = 1
-
-    STRING = [MAJOR, MINOR, TINY].join('.')
-  end
+class Polynomial
+  VERSION = "0.8.0"
 end
