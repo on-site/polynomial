@@ -1,8 +1,7 @@
-require File.dirname(__FILE__) + '/test_helper.rb'
-
+require 'minitest/autorun'
 require 'polynomial/chebyshev'
 
-class TestChebyshev < Test::Unit::TestCase
+class TestChebyshev < MiniTest::Test
 
   @@epsilon = 1e-11
 
@@ -34,9 +33,9 @@ class TestChebyshev < Test::Unit::TestCase
     8 => [1,0,-40,0,240,0,-448,0,256],
     9 => [0,10,0,-160,0,672,0,-1024,0,512],
   }
-  
+
   def test_first_kind_invalid_degree
-    assert_raise(RangeError) { Polynomial::Chebyshev.first_kind(-1) }
+    assert_raises(RangeError) { Polynomial::Chebyshev.first_kind(-1) }
   end
 
   def my_test_in_out_rand(in_out_hash, method_name)
@@ -47,23 +46,23 @@ class TestChebyshev < Test::Unit::TestCase
       assert_equal Polynomial[*coefs], Polynomial::Chebyshev.send(method_name, degree)
     end
   end
-  
+
   def my_test_in_out_seq(in_out_hash, method_name)
     in_out_hash.each_pair do |degree, coefs|
       assert_equal Polynomial[*coefs], Polynomial::Chebyshev.send(method_name, degree)
     end
   end
-  
+
   def test_cached_first_kind
     my_test_in_out_rand(@@first_kind_in_out, :first_kind)
     my_test_in_out_seq(@@first_kind_in_out, :first_kind)
   end
-  
+
   def test_uncached_first_kind
     my_test_in_out_rand(@@first_kind_in_out, :uncached_first_kind)
     my_test_in_out_seq(@@first_kind_in_out, :uncached_first_kind)
   end
-    
+
   # See {Wikipedia entry}[http://en.wikipedia.org/wiki/Chebyshev_polynomials] for trigonometric definitions.
   #
   def test_first_kind_evaluation
@@ -76,7 +75,7 @@ class TestChebyshev < Test::Unit::TestCase
       end
     end
   end
-  
+
   def test_cached_second_kind
     my_test_in_out_rand(@@second_kind_in_out, :second_kind)
     my_test_in_out_seq(@@second_kind_in_out, :second_kind)
@@ -86,7 +85,7 @@ class TestChebyshev < Test::Unit::TestCase
     my_test_in_out_rand(@@second_kind_in_out, :uncached_second_kind)
     my_test_in_out_seq(@@second_kind_in_out, :uncached_second_kind)
   end
-  
+
   # See {Wikipedia entry}[http://en.wikipedia.org/wiki/Chebyshev_polynomials] for trigonometric definitions.
   #
   def test_second_kind_evaluation
@@ -99,5 +98,5 @@ class TestChebyshev < Test::Unit::TestCase
       end
     end
   end
-  
+
 end

@@ -1,12 +1,11 @@
-require File.dirname(__FILE__) + '/test_helper.rb'
-
+require 'minitest/autorun'
 require 'complex'
 require 'bigdecimal'
 require 'polynomial/multivariate'
 
 MVP = Multivariate
 
-class TestPoly < Test::Unit::TestCase
+class TestPoly < MiniTest::Test
 
   @@epsilon = 1e-7
 
@@ -14,15 +13,15 @@ class TestPoly < Test::Unit::TestCase
     @one = MVP::Unity
     @zero = MVP::Zero
   end
-  
+
   def test_incorrect_initialization
-    assert_raise(ArgumentError) { MVP.new }
-    assert_raise(ArgumentError) { MVP.new [] }
-    assert_raise(ArgumentError) { MVP.new [1], [2] }
-    assert_raise(ArgumentError) { MVP.new [1,2], [3,4] }
-    assert_raise(ArgumentError) { MVP.new [1,2,3], [4,5] }
-    assert_raise(TypeError) { MVP.new :oops }
-    assert_raise(TypeError) { MVP.new ['foo'] }
+    assert_raises(ArgumentError) { MVP.new }
+    assert_raises(ArgumentError) { MVP.new [] }
+    assert_raises(ArgumentError) { MVP.new [1], [2] }
+    assert_raises(ArgumentError) { MVP.new [1,2], [3,4] }
+    assert_raises(ArgumentError) { MVP.new [1,2,3], [4,5] }
+    assert_raises(TypeError) { MVP.new :oops }
+    assert_raises(TypeError) { MVP.new ['foo'] }
   end
 
   def test_initialization
@@ -31,8 +30,8 @@ class TestPoly < Test::Unit::TestCase
 
   def test_equal
     assert_equal(MVP.new([1,0,0]), MVP.new([1,0,0]))
-    assert_not_equal(MVP.new([1,0,0]), MVP.new([1,1,0]))
-    assert_not_equal(MVP.new([1,0,0]), MVP.new([1,0,1]))
+    assert("equal") { MVP.new([1,0,0]) != MVP.new([1,1,0]) }
+    assert("equal") { MVP.new([1,0,0]) != MVP.new([1,0,1]) }
   end
 
   def test_degree
@@ -40,7 +39,7 @@ class TestPoly < Test::Unit::TestCase
     assert_equal(0, q.degree(0))
     assert_equal(0, q.degree(1))
     assert_equal(3, q.degree(2))
-    assert_raise(RangeError) { q.degree(42) }
+    assert_raises(RangeError) { q.degree(42) }
   end
 
   CoefficientsVariablesValues = {
@@ -99,8 +98,8 @@ class TestPoly < Test::Unit::TestCase
     assert_equal @one, q**0
     assert_equal q*q, q**2
     assert_equal q*q*q, q**3
-    assert_raise(RangeError) { q**(-1) }
-    assert_raise(TypeError) { q**(2.3) }
+    assert_raises(RangeError) { q**(-1) }
+    assert_raises(TypeError) { q**(2.3) }
   end
 
 =begin
@@ -124,13 +123,13 @@ class TestPoly < Test::Unit::TestCase
     assert_equal Poly.new(0,1,4,9), Poly.new(3) {|n| n**2 }
     assert_equal Poly.new(3.2), Poly.new(3.2) {|n| n**2 }
   end
-  
+
   def test_new_from_power_coefficients_hash
     assert_equal Poly[0,2], Poly.new({1=>2})
     assert_equal Poly[0,0,3], Poly.new({2=>3})
     assert_equal Poly[0,2,3], Poly[1=>2, 2=>3]
   end
-  
+
   def test_new_from_valid_strings
     assert_equal Poly[0], Poly['0']
     assert_equal Poly[1], Poly['  1  ']
@@ -156,57 +155,57 @@ class TestPoly < Test::Unit::TestCase
     assert_equal Poly[0,1e-2], Poly.from_string('1e-2*x')
     assert_equal Poly[BigDecimal('1.1')], Poly.from_string(BigDecimal('1.1').to_s)
   end
-  
+
   def test_from_invalid_strings_misc
-    assert_raise(ArgumentError) { Poly[''] }
-    assert_raise(ArgumentError) { Poly['1..'] }
-    assert_raise(ArgumentError) { Poly['1..1'] }
-    assert_raise(ArgumentError) { Poly['+'] }
-    assert_raise(ArgumentError) { Poly['++1'] }
-    assert_raise(ArgumentError) { Poly['-+1'] }
-    assert_raise(ArgumentError) { Poly['--1'] }
-    assert_raise(ArgumentError) { Poly['1-'] }
-    assert_raise(ArgumentError) { Poly['1.2-'] }
-    assert_raise(ArgumentError) { Poly['xx'] }
-    assert_raise(ArgumentError) { Poly['xx**2'] }
-    assert_raise(ArgumentError) { Poly['x*x'] }
-    assert_raise(ArgumentError) { Poly['x**x'] }
-    assert_raise(ArgumentError) { Poly['2**3'] }
-    assert_raise(ArgumentError) { Poly['x**3*4'] }
-    assert_raise(ArgumentError) { Poly['e2'] }
-    assert_raise(ArgumentError) { Poly['1e--2'] }
-    assert_raise(ArgumentError) { Poly['1ee2'] }
+    assert_raises(ArgumentError) { Poly[''] }
+    assert_raises(ArgumentError) { Poly['1..'] }
+    assert_raises(ArgumentError) { Poly['1..1'] }
+    assert_raises(ArgumentError) { Poly['+'] }
+    assert_raises(ArgumentError) { Poly['++1'] }
+    assert_raises(ArgumentError) { Poly['-+1'] }
+    assert_raises(ArgumentError) { Poly['--1'] }
+    assert_raises(ArgumentError) { Poly['1-'] }
+    assert_raises(ArgumentError) { Poly['1.2-'] }
+    assert_raises(ArgumentError) { Poly['xx'] }
+    assert_raises(ArgumentError) { Poly['xx**2'] }
+    assert_raises(ArgumentError) { Poly['x*x'] }
+    assert_raises(ArgumentError) { Poly['x**x'] }
+    assert_raises(ArgumentError) { Poly['2**3'] }
+    assert_raises(ArgumentError) { Poly['x**3*4'] }
+    assert_raises(ArgumentError) { Poly['e2'] }
+    assert_raises(ArgumentError) { Poly['1e--2'] }
+    assert_raises(ArgumentError) { Poly['1ee2'] }
   end
-  
+
   def test_from_invalid_strings_incomplete
-    assert_raise(ArgumentError) { Poly['1+'] }
-    assert_raise(ArgumentError) { Poly['1.2+'] }
-    assert_raise(ArgumentError) { Poly['1*'] }
-    assert_raise(ArgumentError) { Poly['1.2*'] }
-    assert_raise(ArgumentError) { Poly['2*x**'] }
+    assert_raises(ArgumentError) { Poly['1+'] }
+    assert_raises(ArgumentError) { Poly['1.2+'] }
+    assert_raises(ArgumentError) { Poly['1*'] }
+    assert_raises(ArgumentError) { Poly['1.2*'] }
+    assert_raises(ArgumentError) { Poly['2*x**'] }
   end
 
   def test_from_invalid_strings_symbol_omission
-    assert_raise(ArgumentError) { Poly['1x'] }
-    assert_raise(ArgumentError) { Poly['1.2x'] }
-    assert_raise(ArgumentError) { Poly['2*x3'] }
+    assert_raises(ArgumentError) { Poly['1x'] }
+    assert_raises(ArgumentError) { Poly['1.2x'] }
+    assert_raises(ArgumentError) { Poly['2*x3'] }
   end
 
   def test_from_invalid_strings_spaces
-    assert_raise(ArgumentError) { Poly['1 * x'] }
-    assert_raise(ArgumentError) { Poly['1 *x'] }
-    assert_raise(ArgumentError) { Poly['1* x'] }
-    assert_raise(ArgumentError) { Poly['1*x ** 2'] }
-    assert_raise(ArgumentError) { Poly['1*x **2'] }
-    assert_raise(ArgumentError) { Poly['1*x** 2'] }
+    assert_raises(ArgumentError) { Poly['1 * x'] }
+    assert_raises(ArgumentError) { Poly['1 *x'] }
+    assert_raises(ArgumentError) { Poly['1* x'] }
+    assert_raises(ArgumentError) { Poly['1*x ** 2'] }
+    assert_raises(ArgumentError) { Poly['1*x **2'] }
+    assert_raises(ArgumentError) { Poly['1*x** 2'] }
   end
-  
+
   def test_from_string_repeated
     assert_equal Poly['1+2'], Poly[3]
     assert_equal Poly['x+3*x'], Poly[0,4]
     assert_equal Poly['1+x+x**2+2*x**2'], Poly[1,1,3]
   end
-  
+
   def test_substitute
     poly = Poly[0]
     pairs = [[0,0], [1,0], [-1,0], [2,0], [0.33, 0]]
@@ -227,7 +226,7 @@ class TestPoly < Test::Unit::TestCase
     poly = Poly[1, -1]
     pairs = [[0,1], [1,0], [-1,2], [2,-1], [0.33, 1-0.33]]
     assert_in_out_pairs(poly, pairs)
-    
+
     poly = Poly[Complex(0,1), 1]
     pairs = [[0,Complex(0,1)], [1,Complex(1,1)], [-1,Complex(-1,1)], [2,Complex(2,1)], [0.33, Complex(0.33,1)]]
     assert_in_out_pairs(poly, pairs)
@@ -236,7 +235,7 @@ class TestPoly < Test::Unit::TestCase
     pairs = [[0,BigDecimal('0')], [1,BigDecimal('1.11')], [-1,BigDecimal('-1.11')], [2,BigDecimal('2.22')], [BigDecimal('0.33'), BigDecimal('0.3663')]]
     assert_in_out_pairs(poly, pairs)
 end
-  
+
   def test_degree
     assert_equal 0, Poly[0].degree
     assert_equal 0, Poly[1].degree
@@ -244,7 +243,7 @@ end
     assert_equal 1, Poly[0,-1].degree
     assert_equal 2, Poly[1,0,1].degree
   end
-  
+
   def test_multiplication
     assert_equal Poly[0], Poly[1] * 0
     assert_equal Poly[0], 0 * Poly[1]
@@ -256,7 +255,7 @@ end
     assert_equal Poly[2,4,6], 2 * Poly[1,2,3]
     assert_equal Poly[0,0,1,2], Poly[0,1,2] * Poly[0,1]
   end
-  
+
   def test_division_by_numeric
     assert_equal Poly[0], Poly[0] / 1
     assert_equal Poly[1], Poly[1] / 1
@@ -271,8 +270,8 @@ end
     assert_equal [Poly[-27,-9,1], Poly[-123]], Poly[-42,0,-12,1].divmod(Poly[-3,1])
     assert_equal [Poly[4,6], Poly[2]], Poly[2,4,6].divmod(Poly[0,1])
     assert_equal [Poly[1,2,3], 0], Poly[2,4,6].divmod(2)
-    assert_raise(ArgumentError) { Poly[1,2,3].divmod(:foo) }
-    assert_raise(ArgumentError) { Poly[1,2,3].divmod(nil) }
+    assert_raises(ArgumentError) { Poly[1,2,3].divmod(:foo) }
+    assert_raises(ArgumentError) { Poly[1,2,3].divmod(nil) }
   end
 
   def test_division_by_polynomial
@@ -295,8 +294,8 @@ end
     @@quomod_data.each do |dividend, divisor, quotient, rest|
       assert_equal [quotient, rest], dividend.quomod(divisor)
     end
-    assert_raise(ArgumentError) { Poly[1,2,3].quomod(:foo) }
-    assert_raise(ArgumentError) { Poly[1,2,3].quomod(nil) }
+    assert_raises(ArgumentError) { Poly[1,2,3].quomod(:foo) }
+    assert_raises(ArgumentError) { Poly[1,2,3].quomod(nil) }
   end
 
   def test_quo_by_numeric
@@ -327,10 +326,10 @@ end
     @@power_data.each do |polynomial, power, result|
       assert_equal result, polynomial**power
     end
-    assert_raise(ArgumentError) { Poly[1,2,3]**(-1) }
-    assert_raise(NoMethodError) { Poly[1,2,3]**(1.1) }
+    assert_raises(ArgumentError) { Poly[1,2,3]**(-1) }
+    assert_raises(NoMethodError) { Poly[1,2,3]**(1.1) }
     # Exceptions raised in Ruby 1.8 and 1.9 are different for the following
-    assert_raise(ArgumentError, NoMethodError) { Poly[1,2,3]**(:foo) }
+    assert_raises(ArgumentError, NoMethodError) { Poly[1,2,3]**(:foo) }
   end
 
   def test_addition
@@ -339,14 +338,14 @@ end
     assert_equal Poly[1,1], Poly[1] + Poly[0,1]
     assert_equal Poly[2,3,4], Poly[2] + Poly[0,3,4]
   end
-  
+
   def test_subtraction
     assert_equal Poly[1], Poly[1] - 0
     assert_equal Poly[0], Poly[1] - 1
     assert_equal Poly[1,-1], Poly[1] - Poly[0,1]
     assert_equal Poly[2,-3,-4], Poly[2] - Poly[0,3,4]
   end
-  
+
   def test_to_s
     assert_equal "0", Poly[0].to_s
     assert_equal "1", Poly[1].to_s
@@ -365,7 +364,7 @@ end
 
     # Complex#to_s results in Ruby 1.8 and 1.9 are different
     assert ["1 + (0 + 1i)*x", "1 + 1i*x"].include?(Poly[1,Complex(0,1)].to_s)
-    
+
     assert_equal "1 + (1 + 1i)*x", Poly[1,Complex(1,1)].to_s
     assert_equal "1 + x", Poly[1,Complex(1,0)].to_s
     assert_equal "-3.33694235763727e-05", Poly[-3.33694235763727e-05].to_s
@@ -375,15 +374,15 @@ end
   end
 
   def test_to_i
-    assert_raise(ArgumentError) { Poly[1,2].to_i }
+    assert_raises(ArgumentError) { Poly[1,2].to_i }
     assert_equal 0, Poly[0].to_i
     assert_equal 3, Poly[3].to_i
     assert_equal(-2, Poly[-2].to_i)
     assert_equal 3, Poly[3.3].to_i
   end
-  
+
   def test_to_f
-    assert_raise(ArgumentError) { Poly[1,2].to_f }
+    assert_raises(ArgumentError) { Poly[1,2].to_f }
     assert_equal 0.0, Poly[0].to_f
     assert_equal 3.1, Poly[3.1].to_f
     assert_equal(-2.2, Poly[-2.2].to_f)
@@ -419,13 +418,13 @@ end
     assert Poly[coefs].equal_in_delta Poly[coefs].integral.derivative, @@epsilon
     assert Poly[0, *coefs[1..-1]].equal_in_delta Poly[coefs].derivative.integral, @@epsilon
   end
-  
+
   def test_equal_in_delta
     assert Poly[0].equal_in_delta(Poly[@@epsilon], @@epsilon)
     assert Poly[1].equal_in_delta(Poly[1-@@epsilon], @@epsilon)
     assert Poly[-@@epsilon,@@epsilon].equal_in_delta(Poly[@@epsilon, -@@epsilon], 2*@@epsilon)
   end
-  
+
   def test_derivative_integral
     [ [0], [1], [0, 42], [1,11], [3,4,5] ].each do |coefs|
       poly = Poly.new(coefs)
@@ -448,22 +447,22 @@ end
     assert_equal Poly[0.5], 0.5
     assert_equal 0.5, Poly[0.5]
     assert_not_equal 1, Poly[1,2]
-    assert_raise(TypeError) { Poly[1] <=> 'foo' }
+    assert_raises(TypeError) { Poly[1] <=> 'foo' }
   end
 
   def test_coerce
     assert_equal [Poly[2],Poly[1]], Poly[1].coerce(2)
     assert_equal [Poly[2],Poly[1]], Poly[1].coerce(Poly[2])
-    assert_raise(TypeError) { Poly[1].coerce('foo') }
+    assert_raises(TypeError) { Poly[1].coerce('foo') }
   end
-  
+
   # HELPER FUNCTIONS
-  
+
   def assert_in_out_pairs(polynomial, input_output_pairs, delta=@@epsilon)
     input_output_pairs.each do |x, y|
       assert_equal y, polynomial.substitute(x)
     end
   end
 =end
-  
+
 end

@@ -1,8 +1,7 @@
-require File.dirname(__FILE__) + '/test_helper.rb'
-
+require 'minitest/autorun'
 require 'polynomial/legendre'
 
-class TestLegendre < Test::Unit::TestCase
+class TestLegendre < MiniTest::Test
 
   @@epsilon = 1e-12
 
@@ -21,8 +20,8 @@ class TestLegendre < Test::Unit::TestCase
   }
 
   def test_invalid_degree
-    assert_raise(RangeError) { Polynomial::Legendre.uncached_legendre(-1) }
-    assert_raise(RangeError) { Polynomial::Legendre.cached_legendre(-1) }
+    assert_raises(RangeError) { Polynomial::Legendre.uncached_legendre(-1) }
+    assert_raises(RangeError) { Polynomial::Legendre.cached_legendre(-1) }
   end
 
   def my_test_in_out_rand(in_out_hash, method_name)
@@ -33,21 +32,21 @@ class TestLegendre < Test::Unit::TestCase
       assert_equal Polynomial[*coefs], Polynomial::Legendre.send(method_name, degree)
     end
   end
-  
+
   def my_test_in_out_seq(in_out_hash, method_name)
     in_out_hash.each_pair do |degree, coefs|
       assert_equal Polynomial[*coefs], Polynomial::Legendre.send(method_name, degree)
     end
   end
-  
+
   def test_cached
     my_test_in_out_rand(@@in_out, :cached_legendre)
     my_test_in_out_seq(@@in_out, :cached_legendre)
   end
-  
+
   def test_uncached
     my_test_in_out_rand(@@in_out, :uncached_legendre)
     my_test_in_out_seq(@@in_out, :uncached_legendre)
   end
-    
+
 end

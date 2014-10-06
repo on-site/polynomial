@@ -1,24 +1,23 @@
-require File.dirname(__FILE__) + '/test_helper.rb'
-
+require 'minitest/autorun'
 require 'polynomial/ultraspherical'
 
-class TestUltraspherical < Test::Unit::TestCase
+class TestUltraspherical < MiniTest::Test
 
   @@epsilon = 1e-12
 
   def test_invalid_range
-    assert_raise(RangeError) { Polynomial::Ultraspherical.us(-3,-3) }
-    assert_raise(RangeError) { Polynomial::Ultraspherical.us(-2,1) }
-    assert_raise(RangeError) { Polynomial::Ultraspherical.us(-1,0) }
-    assert_raise(RangeError) { Polynomial::Ultraspherical.us(2,-1) }
+    assert_raises(RangeError) { Polynomial::Ultraspherical.us(-3,-3) }
+    assert_raises(RangeError) { Polynomial::Ultraspherical.us(-2,1) }
+    assert_raises(RangeError) { Polynomial::Ultraspherical.us(-1,0) }
+    assert_raises(RangeError) { Polynomial::Ultraspherical.us(2,-1) }
   end
 
   def test_ok_range
-    assert_nothing_raised { Polynomial::Ultraspherical.us(1,-0.5) }
-    assert_nothing_raised { Polynomial::Ultraspherical.us(2,-0.99) }
-    assert_nothing_raised { Polynomial::Ultraspherical.us(3,0.1) }
-    assert_nothing_raised { Polynomial::Ultraspherical.us(0,-3) }
-    assert_nothing_raised { Polynomial::Ultraspherical.us(7,1) }
+    Polynomial::Ultraspherical.us(1,-0.5)
+    Polynomial::Ultraspherical.us(2,-0.99)
+    Polynomial::Ultraspherical.us(3,0.1)
+    Polynomial::Ultraspherical.us(0,-3)
+    Polynomial::Ultraspherical.us(7,1)
   end
 
   def test_coefficients
@@ -39,7 +38,7 @@ class TestUltraspherical < Test::Unit::TestCase
     in_out.each_pair do |args, coefs|
       assert_equal Polynomial[*coefs], Polynomial::Ultraspherical.us(*args)
     end
-    
+
   end
 
 end
