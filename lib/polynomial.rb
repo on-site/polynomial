@@ -1,13 +1,4 @@
 require "polynomial/version"
-begin
-  require 'handy_hash'
-rescue LoadError
-  unless defined? HandyHash
-    $stderr.puts 'HandyHash not be loaded, abbreviations not enabled'
-    HandyHash = Hash
-    Hash.class_eval { alias merge_abbrv merge }
-  end
-end
 
 # Polynomials on a single variable.
 #
@@ -60,7 +51,7 @@ class Polynomial
     @coefs.freeze
   end
 
-  FromStringDefaults = HandyHash[
+  FromStringDefaults = Hash[
     :power_symbol => '**',
     :multiplication_symbol => '*',
     :variable_name => 'x',
@@ -77,7 +68,7 @@ class Polynomial
   #   Polynomial.from_string('x^2-1', :power_symbol=>'^').to_s #=> -1 + x**2
   #
   def self.from_string(s, params={})
-    Polynomial.new(self.coefs_from_string(s, FromStringDefaults.merge_abbrv(params)))
+    Polynomial.new(self.coefs_from_string(s, FromStringDefaults.merge(params)))
   end
 
   # Degree of the polynomial (i.e., highest not null power of the variable).
@@ -292,7 +283,7 @@ class Polynomial
     Polynomial.new(a)
   end
 
-  ToSDefaults = HandyHash[
+  ToSDefaults = Hash[
     :verbose => false,
     :spaced => true,
     :power_symbol => '**',
@@ -313,7 +304,7 @@ class Polynomial
   #   Polynomial[1,0,3].to_s(:verbose=>true) #=> "1 + 0*x + 3*x**2"
   #
   def to_s(params={})
-    params = ToSDefaults.merge_abbrv(params)
+    params = ToSDefaults.merge(params)
     mult = params[:multiplication_symbol]
     pow = params[:power_symbol]
     var = params[:variable_name]
@@ -358,19 +349,6 @@ class Polynomial
   # Integer. If degree is positive, an exception is raised.
   #
   def to_i; to_num.to_i; end
-
-  # If EasyPlot can be loaded, plot method is defined.
-  begin
-    require 'easy_plot'
-
-    # Plots polynomial using EasyPlot.
-    #
-    def plot(params={})
-      EasyPlot.plot(self.to_s, params)
-    end
-  rescue LoadError
-    $stderr.puts 'EasyPlot could not be loaded, thus plotting convenience methods were not defined.'
-  end
 
   # Compares with another Polynomial by degrees then coefficients.
   #

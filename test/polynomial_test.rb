@@ -5,7 +5,7 @@ require 'polynomial'
 
 Poly = Polynomial
 
-class TestPoly < MiniTest::Unit::TestCase
+class TestPoly < MiniTest::Test
 
   @@epsilon = 1e-7
 
