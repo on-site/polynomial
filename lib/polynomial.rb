@@ -1,3 +1,4 @@
+require "polynomial/version"
 begin
   require 'handy_hash'
 rescue LoadError
@@ -13,11 +14,11 @@ end
 class Polynomial
 
   attr_reader :coefs
-  
+
   class << self
     alias [] new
   end
-  
+
   def dup
     Marshal.load(Marshal.dump(self))
   end
@@ -56,9 +57,9 @@ class Polynomial
       end
     end
     @coefs = Polynomial.remove_trailing_zeroes(coefs)
-    @coefs.freeze    
+    @coefs.freeze
   end
-  
+
   FromStringDefaults = HandyHash[
     :power_symbol => '**',
     :multiplication_symbol => '*',
@@ -78,13 +79,13 @@ class Polynomial
   def self.from_string(s, params={})
     Polynomial.new(self.coefs_from_string(s, FromStringDefaults.merge_abbrv(params)))
   end
-  
+
   # Degree of the polynomial (i.e., highest not null power of the variable).
   #
   def degree
     @coefs.size-1
   end
-  
+
   # Evaluates Polynomial of degree _n_ at point _x_ in O(_n_) time using Horner's rule.
   #
   def substitute(x)
@@ -119,7 +120,7 @@ class Polynomial
       raise TypeError, "#{other.class} can't be coerced into Polynomial"
     end
   end
-  
+
   # Add another Polynomial or Numeric object.
   #
   def +(other)
@@ -135,19 +136,19 @@ class Polynomial
         Polynomial.new(a)
     end
   end
-  
+
   # Generates a Polynomial object with negated coefficients.
   #
   def -@
     Polynomial.new(coefs.map {|x| -x})
   end
-  
+
   # Subtract another Polynomial or Numeric object.
   #
   def -(other)
     self + (-other)
   end
-  
+
   # Multiply by another Polynomial or Numeric object.
   # As the straightforward algorithm is used, multipling two polynomials of
   # degree _m_ and _n_ takes O(_m_ _n_) operations. It is well-known, though,
@@ -278,7 +279,7 @@ class Polynomial
     end
     Polynomial.new(a)
   end
-  
+
   # Computes polynomial's derivative (which is itself a polynomial).
   #
   def derivative
@@ -290,7 +291,7 @@ class Polynomial
     end
     Polynomial.new(a)
   end
-  
+
   ToSDefaults = HandyHash[
     :verbose => false,
     :spaced => true,
@@ -352,12 +353,12 @@ class Polynomial
   # Float. If degree is positive, an exception is raised.
   #
   def to_f; to_num.to_f; end
-  
+
   # Returns the only coefficient of a zero-degree polynomial converted to an
   # Integer. If degree is positive, an exception is raised.
   #
   def to_i; to_num.to_i; end
-  
+
   # If EasyPlot can be loaded, plot method is defined.
   begin
     require 'easy_plot'
@@ -384,7 +385,7 @@ class Polynomial
     end
   end
   include Comparable
-  
+
   # Returns true if the other Polynomial has same degree and close-enough
   # (up to delta absolute difference) coefficients. Returns false otherwise.
   #
@@ -392,10 +393,10 @@ class Polynomial
     return false unless self.degree == other.degree
     for n in 0 .. degree
       return false unless (@coefs[n] - other.coefs[n]).abs <= delta
-    end  
+    end
     true
   end
-  
+
   private
 
   def self.remove_trailing_zeroes(ary)
@@ -415,14 +416,14 @@ class Polynomial
     power_coefs = Hash.new(0).merge(hash)
     (0..power_coefs.keys.max).map {|p| power_coefs[p] }
   end
-  
+
   # Extracts the Array of coefficients from a String.
   #
   def self.coefs_from_string(s, params={})
     h = pow_coefs_from_string(s, params)
     coefs_from_pow_coefs(h, params)
   end
-  
+
   # Extracts a power-to-coefficient Hash from a String.
   #
   def self.pow_coefs_from_string(s, params={})
@@ -502,7 +503,7 @@ class Polynomial
   def unity?
     self == Unity
   end
-  
+
 =begin
 
 #-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -528,5 +529,5 @@ class Polynomial
   end
 
 =end
- 
+
 end
